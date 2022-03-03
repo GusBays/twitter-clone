@@ -74,6 +74,31 @@ class Usuario extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
+    public function autenticar() {
+        $query = "
+        SELECT id, nome, email FROM
+            usuarios
+        WHERE
+            email = :email and senha = :senha
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':senha', $this->__get('senha'));
+        $stmt->execute();
+
+        $usuario = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        //PRECISA UMA CORREÇÃO AQUI, LOG: 
+        //Notice: Trying to access array offset on value of type bool in C:\www\twitter-clone\App\Models\Usuario.php on line 92
+        if($usuario['id'] != ''&& $usuario['nome'] != '') {
+            $this->__set('id', $usuario['id']);
+            $this->__set('nome', $usuario['nome']);
+        }
+
+        return $this;
+    }
+
 }
 
 ?>

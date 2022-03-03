@@ -12,6 +12,9 @@ class IndexController extends Action {
 
 	public function index() {
 
+		//cria um atributo dinamico na view chamado login, seta ele com o valor recebido
+		//se nao vier nada, fica vazio, isso será verificado no index.phtml pra exibir erro
+		$this->view->login = isset($_GET['login']) ? $_GET['login'] : '';
 		$this->render('index');
 	}
 
