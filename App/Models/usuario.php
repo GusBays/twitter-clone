@@ -99,17 +99,33 @@ class Usuario extends Model {
         return $this;
     }
 
+    //listar usuarios na timeline tirando o autenticado
     public function getAll() {
         
+        //faz uma consulta e uma sub consulta que conta se o usuario ja está seguindo ou não
+        //isso serve pra tratar na view depois qual dos botões serão exibidos, seguir ou deixar de seguir
+        //if seguindo_sn > 0, só exibe o deixar de seguir, if == 0, só exibe o seguir
         $query = '
         SELECT 
-            id, nome, email
+            u.id, 
+            u.nome, 
+            u.email,
+            (
+                SELECT 
+                    count(*)
+                FROM
+                    usuarios_seguidores as us
+                WHERE
+                    us.id_usuario = :id_usuario 
+                AND
+                    us.id_usuario_seguindo = u.id
+            ) as seguindo_sn
         FROM
-            usuarios
+            usuarios as u
         WHERE
-            nome like :nome
+            u.nome like :nome
         AND
-            id != :id_usuario
+            u.id != :id_usuario
         ';
 
         $stmt = $this->db->prepare($query);
@@ -118,6 +134,42 @@ class Usuario extends Model {
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    //seguir usuarios
+    public function seguirUsuario($id_usuario_seguindo) {
+        $query = "
+        INSERT INTO
+            usuarios_seguidores(id_usuario, id_usuario_seguindo)
+        VALUES
+            (:id_usuario, :id_usuario_seguindo)
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id_usuario', $this->__get('id'));
+        $stmt->bindValue(':id_usuario_seguindo', $id_usuario_seguindo);
+        $stmt->execute();
+
+        return true;
+    }
+
+    //deixar de seguir
+    public function deixarSeguirUsuario($id_usuario_seguindo) {
+        $query = "
+        DELETE FROM
+            usuarios_seguidores
+        WHERE
+            id_usuario = :id_usuario
+        AND
+            id_usuario_seguindo = :id_usuario_seguindo
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id_usuario', $this->__get('id'));
+        $stmt->bindValue(':id_usuario_seguindo', $id_usuario_seguindo);
+        $stmt->execute();
+
+        return true;
     }
 
 }
