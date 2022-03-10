@@ -108,10 +108,13 @@ class Usuario extends Model {
             usuarios
         WHERE
             nome like :nome
+        AND
+            id != :id_usuario
         ';
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':nome', '%'.$this->__get('nome').'%');
+        $stmt->bindValue(':id_usuario', $this->__get('id'));
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
