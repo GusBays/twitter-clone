@@ -24,6 +24,15 @@ class AppController extends Action {
         //cria um atributo dinamico na view que recebe os tweets do array
         $this->view->tweets = $tweets;
 
+        $usuario = Container::getModel('Usuario');
+        $usuario->__set('id', $_SESSION['id']);
+
+        //cria variaveis na view para poder acessar as informações direto lá
+        $this->view->info_usuario = $usuario->getInfoUsuario();
+        $this->view->total_tweets = $usuario->getTotalTweets();
+        $this->view->total_seguindo = $usuario->getTotalSeguindo();
+        $this->view->total_seguidores = $usuario->getTotalSeguidores();
+
         $this->render('timeline');
     }
 
@@ -70,6 +79,16 @@ class AppController extends Action {
         }
          
         $this->view->usuarios = $usuarios;
+
+        $usuarioAutenticado = Container::getModel('Usuario');
+        $usuarioAutenticado->__set('id', $_SESSION['id']);
+
+        //cria variaveis na view para poder acessar as informações direto lá
+        $this->view->info_usuario = $usuarioAutenticado->getInfoUsuario();
+        $this->view->total_tweets = $usuarioAutenticado->getTotalTweets();
+        $this->view->total_seguindo = $usuarioAutenticado->getTotalSeguindo();
+        $this->view->total_seguidores = $usuarioAutenticado->getTotalSeguidores();
+
 
         $this->render('quemSeguir');
     }
