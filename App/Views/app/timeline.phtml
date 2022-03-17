@@ -86,7 +86,8 @@
 						<?php if($tweet['id_usuario'] == $_SESSION['id']) { ?>
 							<form method="post" action="/deletar" >
 								<div class="col d-flex justify-content-end">
-									<button name="deletar" type="submit" class="btn btn-danger"><small>Deletar tweet</small></button>
+									<input type="hidden" id="id" name="id" value="<?=$tweet['id']?>">
+									<button type="submit" class="btn btn-danger"><small>Deletar tweet</small></button>
 								</div>
 							</form>
 						<?php } ?>
