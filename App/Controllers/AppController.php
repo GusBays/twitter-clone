@@ -113,6 +113,14 @@ class AppController extends Action {
 
         header('Location: /quem_seguir');
     }
+
+    public function deletar() {
+
+        $this->validaAutenticacao();
+        print_r($_POST);
+
+        
+    }
 }
 
 ?>
