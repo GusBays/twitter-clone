@@ -113,6 +113,23 @@ class AppController extends Action {
 
         header('Location: /quem_seguir');
     }
+
+    public function deletar() {
+
+        $this->validaAutenticacao();
+        
+        //cria uma instancia de tweet
+        $tweet = Container::getModel('Tweet');
+
+        //seta o id do tweet com o que veio do input do botao na view timeline
+        $tweet->__set('id', $_POST['id']);
+
+        //chama a função pra deletar o tweet passando o id setado antes
+        $tweet->deleteTweet($tweet->__get('id'));
+
+        //retorna pra timeline atualizada
+        header('Location: /timeline');
+    }
 }
 
 ?>

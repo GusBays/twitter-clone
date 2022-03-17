@@ -1,12 +1,12 @@
 {
-	"name": "miniframework",
+	"name": "twitter-clone",
 	"require": {
 		"php": ">= 7.0"
 	},
 	"authors": [
 		{
-			"name": "Jorge Sant Ana",
-			"email": "jorge@teste.com.br"
+			"name": "Gustavo Bays de Oliveira",
+			"email": "gustavo_boliv@hotmail.com"
 		}
 	],
 	"autoload": {
