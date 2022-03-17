@@ -19,8 +19,13 @@ class AppController extends Action {
 
         $tweet->__set('id_usuario', $_SESSION['id']);
 
-        $tweets = $tweet->getAll();
+        $limit = 10;
+        $offset = 0;
+        $page = 1;
 
+        //$tweets = $tweet->getAll();
+        $tweets = $tweet->getPaginate($limit, $offset);
+        
         //cria um atributo dinamico na view que recebe os tweets do array
         $this->view->tweets = $tweets;
 
