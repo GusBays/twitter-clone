@@ -19,8 +19,25 @@ class AppController extends Action {
 
         $tweet->__set('id_usuario', $_SESSION['id']);
 
-        $tweets = $tweet->getAll();
+        //define limite de 10 tweets por pagoina, verifica a pagina que o user está, e calcula o deslocamento no offset
+        $limit = 10;
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
 
+        //$tweets = $tweet->getAll();
+
+        //pegar tweets por pagina
+        $tweets = $tweet->getPaginate($limit, $offset);
+
+        //pega o numero de tweets para usar na view depois
+        $total_tweets = $tweet->getTotalRegistros();
+
+        //cria o atributo dinamico pra usar na view como numero total de paginas, usando os tweets dividido pelo limite
+        $this->view->total_de_paginas = ceil($total_tweets['total'] / $limit);
+
+        //cria um atributo dinamico na view para pegar a página ativa e estilizar nos botoes
+        $this->view->page_active = $page;
+        
         //cria um atributo dinamico na view que recebe os tweets do array
         $this->view->tweets = $tweets;
 

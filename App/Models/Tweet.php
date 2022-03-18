@@ -61,15 +61,78 @@ class Tweet extends Model {
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-
-    public function deleteTweet($id_tweet) {
+    
+    //recuperar tweets com paginação
+    public function getPaginate($limit, $offset) {
 
         $query = "
-        DELETE FROM
-            tweets
-        WHERE
-            id = :id_tweet
+            select
+                t.id, t.id_usuario, u.nome, t.tweet, DATE_FORMAT(t.data, '%d/%m/%y %H:%i') as data  
+            from 
+                tweets as t
+                left join usuarios as u on (t.id_usuario = u.id)
+            where
+                t.id_usuario = :id_usuario
+            OR
+                t.id_usuario in (
+                    SELECT
+                        id_usuario_seguindo
+                    FROM
+                        usuarios_seguidores
+                    WHERE
+                        id_usuario = :id_usuario
+                )
+            order by
+                t.data desc
+            limit
+                $limit
+            offset
+                $offset
         ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id_usuario', $this->__get('id_usuario'));
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+        //recuperar total tweets de tweets
+        public function getTotalRegistros() {
+
+            $query = "
+                select
+                    count(*) as total
+                from 
+                    tweets as t
+                    left join usuarios as u on (t.id_usuario = u.id)
+                where
+                    t.id_usuario = :id_usuario
+                OR
+                    t.id_usuario in (
+                        SELECT
+                            id_usuario_seguindo
+                        FROM
+                            usuarios_seguidores
+                        WHERE
+                            id_usuario = :id_usuario
+                    )";
+    
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(':id_usuario', $this->__get('id_usuario'));
+            $stmt->execute();
+    
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        }
+  
+       public function deleteTweet($id_tweet) {
+
+        $query = "
+          DELETE FROM
+              tweets
+          WHERE
+              id = :id_tweet
+          ";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id_tweet', $id_tweet);
@@ -77,6 +140,7 @@ class Tweet extends Model {
 
         return true;
     }
+
 }
 
 ?>
